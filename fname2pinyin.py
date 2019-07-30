@@ -1,55 +1,77 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import os
+import shutil
 
 from xpinyin import Pinyin
 
 pinyin = Pinyin()
-out_dir = "./out"
+
+
+def tidy_name(name):
+    invalid_char = u"\\\"!$^()+=/{[;:?<>,]}！￥（）—【】、|。，《》·`&%'…@#*."
+    common_char = u"1234567890"
+    chinese_name = ""
+    pinyin_name = ""
+    for char in name:
+        if char in invalid_char:
+            continue
+        if char in common_char:
+            chinese_name += char
+            pinyin_name += char
+            continue
+        key = "%X" % ord(char)
+        if len(key) >= 4:
+            chinese_name += char
+        else:
+            pinyin_name += char
+
+    chinese_name = chinese_name.strip(" ")
+    pinyin_name = pinyin_name.strip(" ")
+    if chinese_name != "":
+        return chinese_name
+    return pinyin_name
 
 
 def walk_dir(dir_name):
     map_list = []
 
-    for rootpath, dirnames, filenames in os.walk(dir_name):
+    for path, dirs, files in os.walk(dir_name):
 
-        def foo(name):
-            name_pinyin = pinyin.get_pinyin(name, "_")
-            target_path = os.path.join(rootpath, name)
-            target_pinyin = os.path.join(rootpath, name_pinyin)
+        for dname in dirs:
+            target_path = os.path.join(path, dname)
+            dname = tidy_name(dname)
+            name_pinyin = pinyin.get_pinyin(dname, "_")
+            target_pinyin = os.path.join(path, name_pinyin)
             map_list.append([target_path, target_pinyin])
 
-        for dname in dirnames:
-            foo(dname)
-
-        for fname in filenames:
-            foo(fname)
+        for fname in files:
+            target_path = os.path.join(path, fname)
+            if fname.find(".") != -1:
+                suffix = fname.split(".")[-1]
+                fname = fname.replace("." + suffix, "")
+                fname = tidy_name(fname)
+                name_pinyin = pinyin.get_pinyin(fname, "_") + "." + suffix
+            else:
+                name_pinyin = pinyin.get_pinyin(fname, "_")
+            target_pinyin = os.path.join(path, name_pinyin)
+            map_list.append([target_path, target_pinyin])
 
     return map_list
 
 
-if __name__ == "__main__":
-    # if len(sys.argv) == 1:
-    #   print(u'fname2pinyin 目标目录 [输出目录]')
-    #   exit(-1)
-    target_dir = "./utest"
-    if len(sys.argv) == 2:
-        target_dir = sys.argv[1]
-    if len(sys.argv) == 3:
-        target_dir = sys.argv[1]
-        out_dir = sys.argv[2]
-
-    if target_dir == out_dir:
-        print(u"[目标目录]和[输出目录]不能相同")
-        exit(-1)
-
+def change_ch_to_pinyin(target_dir="./utest", out_dir="./out"):
     if os.path.exists(out_dir):
-        os.system("rm -fr %s" % (out_dir))
-    os.system("cp -fr %s %s" % (target_dir, out_dir))
+        shutil.rmtree(out_dir)
+    shutil.copytree(target_dir, out_dir)
 
     map_list = walk_dir(out_dir)
     while len(map_list) > 0:
         data = map_list.pop()
         os.rename(data[0], data[1])
+
+
+if __name__ == "__main__":
+    change_ch_to_pinyin()
+    # print(walk_dir("./utest"))
