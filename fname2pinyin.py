@@ -3,13 +3,14 @@
 
 import os
 import shutil
+import tempfile
 
 from xpinyin import Pinyin
 
 pinyin = Pinyin()
 
 
-def tidy_name(name):
+def __tidy_name(name):
     invalid_char = u"\\\"!$^()+=/{[;:?<>,]}！￥（）—【】、|。，《》·`&%'…@#*."
     common_char = u"1234567890"
     chinese_name = ""
@@ -31,17 +32,17 @@ def tidy_name(name):
     pinyin_name = pinyin_name.strip(" ")
     if chinese_name != "":
         return chinese_name
-    return pinyin_name
+    return pinyin_name.lower()
 
 
-def walk_dir(dir_name):
+def __walk_dir(dir_name):
     map_list = []
 
     for path, dirs, files in os.walk(dir_name):
 
         for dname in dirs:
             target_path = os.path.join(path, dname)
-            dname = tidy_name(dname)
+            dname = __tidy_name(dname)
             name_pinyin = pinyin.get_pinyin(dname, "_")
             target_pinyin = os.path.join(path, name_pinyin)
             map_list.append([target_path, target_pinyin])
@@ -51,7 +52,7 @@ def walk_dir(dir_name):
             if fname.find(".") != -1:
                 suffix = fname.split(".")[-1]
                 fname = fname.replace("." + suffix, "")
-                fname = tidy_name(fname)
+                fname = __tidy_name(fname)
                 name_pinyin = pinyin.get_pinyin(fname, "_") + "." + suffix
             else:
                 name_pinyin = pinyin.get_pinyin(fname, "_")
@@ -61,17 +62,31 @@ def walk_dir(dir_name):
     return map_list
 
 
-def change_ch_to_pinyin(target_dir="./utest", out_dir="./out"):
+def translate_to_pinyin(target_dir="./utest", out_dir="./out"):
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
     shutil.copytree(target_dir, out_dir)
 
-    map_list = walk_dir(out_dir)
+    map_list = __walk_dir(out_dir)
     while len(map_list) > 0:
         data = map_list.pop()
         os.rename(data[0], data[1])
 
 
+def translate_cover_pinyin(target_dir):
+    out_dir = os.path.join(tempfile.gettempdir(), "fname2pinyin")
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+    shutil.copytree(target_dir, out_dir)
+
+    map_list = __walk_dir(out_dir)
+    while len(map_list) > 0:
+        data = map_list.pop()
+        os.rename(data[0], data[1])
+    shutil.rmtree(target_dir)
+    shutil.move(out_dir, target_dir)
+
+
 if __name__ == "__main__":
-    change_ch_to_pinyin()
-    # print(walk_dir("./utest"))
+    # translate_to_pinyin('./res', './out')
+    translate_cover_pinyin("./res")
