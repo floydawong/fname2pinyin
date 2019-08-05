@@ -3,7 +3,6 @@
 
 import os
 import shutil
-import tempfile
 
 from xpinyin import Pinyin
 
@@ -74,19 +73,12 @@ def translate_to_pinyin(target_dir="./utest", out_dir="./out"):
 
 
 def translate_cover_pinyin(target_dir):
-    out_dir = os.path.join(tempfile.gettempdir(), "fname2pinyin")
-    if os.path.exists(out_dir):
-        shutil.rmtree(out_dir)
-    shutil.copytree(target_dir, out_dir)
-
-    map_list = __walk_dir(out_dir)
+    map_list = __walk_dir(target_dir)
     while len(map_list) > 0:
         data = map_list.pop()
         os.rename(data[0], data[1])
-    shutil.rmtree(target_dir)
-    shutil.move(out_dir, target_dir)
 
 
 if __name__ == "__main__":
-    # translate_to_pinyin('./res', './out')
-    translate_cover_pinyin("./res")
+    # translate_to_pinyin('../res', '../out')
+    translate_cover_pinyin("../res")
