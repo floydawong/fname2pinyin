@@ -79,6 +79,10 @@ def translate_cover_pinyin(target_dir):
         os.rename(data[0], data[1])
 
 
+def main():
+    translate_to_pinyin('./res', './out')
+    # translate_cover_pinyin("../res")
+
+
 if __name__ == "__main__":
-    # translate_to_pinyin('../res', '../out')
-    translate_cover_pinyin("../res")
+    main()
