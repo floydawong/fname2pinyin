@@ -69,7 +69,8 @@ def translate_to_pinyin(target_dir="./utest", out_dir="./out"):
     map_list = __walk_dir(out_dir)
     while len(map_list) > 0:
         data = map_list.pop()
-        os.rename(data[0], data[1])
+        if not os.path.exists(data[1]):
+            os.rename(data[0], data[1])
 
 
 def translate_cover_pinyin(target_dir):
