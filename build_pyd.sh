@@ -1,4 +1,4 @@
-python main.py
+python setup.py build_ext --inplace
 
 echo "============= 1"
 sleep 1

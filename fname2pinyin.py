@@ -10,7 +10,7 @@ pinyin = Pinyin()
 
 
 def __tidy_name(name):
-    invalid_char = u"\\\"!$^()+=/{[;:?<>,]}！￥（）—【】、|。，《》·`&%'…@#*."
+    invalid_char = u"!\"#$%&'()*+,-./:;<=>?@[\\]^_{|}—‘’“”…、。《》【】！（），：；？￥"
     common_char = u"1234567890"
     chinese_name = ""
     pinyin_name = ""
