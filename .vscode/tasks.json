@@ -1,0 +1,13 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "fname2pinyin",
+      "type": "shell",
+      "command": "python -u fname2pinyin.py",
+      "problemMatcher": []
+    }
+  ]
+}
