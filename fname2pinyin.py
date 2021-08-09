@@ -12,26 +12,30 @@ pinyin = Pinyin()
 def __tidy_name(name):
     invalid_char = u"!\"#$%&'()*+,-./:;<=>?@[\\]^_{|}—‘’“”…、。《》【】！（），：；？￥"
     common_char = u"1234567890"
-    chinese_name = ""
-    pinyin_name = ""
+    fname = ""
+    # chinese_name = ""
+    # pinyin_name = ""
     for char in name:
         if char in invalid_char:
             continue
         if char in common_char:
-            chinese_name += char
-            pinyin_name += char
+            # chinese_name += char
+            # pinyin_name += char
+            fname += char
             continue
         key = "%X" % ord(char)
-        if len(key) >= 4:
-            chinese_name += char
-        else:
-            pinyin_name += char
+        fname += char
+    #     if len(key) >= 4:
+    #         chinese_name += char
+    #     else:
+    #         pinyin_name += char
 
-    chinese_name = chinese_name.strip(" ")
-    pinyin_name = pinyin_name.strip(" ")
-    if chinese_name != "":
-        return chinese_name
-    return pinyin_name.lower()
+    # chinese_name = chinese_name.strip(" ")
+    # pinyin_name = pinyin_name.strip(" ")
+    # if chinese_name != "":
+    #     return chinese_name
+    # return pinyin_name.lower()
+    return fname.lower()
 
 
 def __walk_dir(dir_name):
