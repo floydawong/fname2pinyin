@@ -98,10 +98,7 @@ def _walk_dir(dir_name):
 
 def translate_to_pinyin(target_dir="./utest", out_dir="./out"):
     """ 翻译目标路径内的文件到输出目录 """
-    if os.path.exists(out_dir):
-        shutil.rmtree(out_dir)
     shutil.copytree(target_dir, out_dir)
-
     map_list = _walk_dir(out_dir)
     while len(map_list) > 0:
         data = map_list.pop()
@@ -117,8 +114,17 @@ def translate_cover_pinyin(target_dir):
         os.rename(data[0], data[1])
 
 
+def init_env(out_dir):
+    if os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+    if os.path.exists(WARNING_FILE_NAME):
+        os.remove(WARNING_FILE_NAME)
+
+
 def main():
-    translate_to_pinyin('./res', './out')
+    out_dir = './out'
+    init_env(out_dir)
+    translate_to_pinyin('./res', out_dir)
     output_duplication_files()
 
 
