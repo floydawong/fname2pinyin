@@ -106,3 +106,7 @@ out
 
 # Pyd
 fname2pinyin.c
+
+
+res
+*.txt
